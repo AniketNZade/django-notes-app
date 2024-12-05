@@ -1,28 +1,34 @@
 pipeline{
-    agent { label 'vinod'}
+   
+    agent { label "vinod"}
     
     stages{
-        stage("Code clone"){
+        
+        stage("code"){
             steps{
-                sh "whoami"
-            clone("https://github.com/AniketNZade/django-notes-app.git","main")
+                echo "This code is cloning "
+                git url : "https://github.com/AniketNZade/django-notes-app.git/" ,branch:"main"
+                echo "code is cloning successfully"
             }
         }
-        stage("Code Build"){
+        stage("Build"){
             steps{
-            dockerbuild("notes-app","latest")
+                echo "This is building the code"
+                sh "docker build -t notes-app:latest ."
             }
         }
-        stage("Push to DockerHub"){
+        stage("test"){
             steps{
-                dockerpush("dockerHubCreds","notes-app","latest")
+                echo "This is testing the code"
             }
         }
         stage("Deploy"){
             steps{
-                deploy()
+                echo "This is Deploying the code"
+                sh "docker run -d -p 8000:8000 notes-app:latest"
             }
         }
-        
     }
 }
+        
+   
